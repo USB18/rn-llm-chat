@@ -2,12 +2,14 @@ import { useCallback, useMemo, useState } from 'react';
 import { KeyboardAvoidingView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AIDisclaimer from '../components/AIDisclaimer';
+import AttachmentSheet from '../components/AttachmentSheet';
 import ChatHeader from '../components/ChatHeader';
 import Composer from '../components/Composer';
 import MessageList from '../components/MessageList';
+import useMediaPicker from '../hooks/useMediaPicker';
 import { getErrorMessage, sendChat } from '../services/openai';
 import { useTheme } from '../theme';
-import { Message } from '../types';
+import { Attachment, Message } from '../types';
 import { createStyles } from './ChatScreen.styles';
 
 function formatTime(date: Date) {
@@ -22,6 +24,25 @@ function ChatScreen() {
   const [draft, setDraft] = useState('');
 
   const [sending, setSending] = useState(false);
+  const [attachmentSheetVisible, setAttachmentSheetVisible] = useState(false);
+
+  // For now picked media is only shown in the chat; it isn't sent to the API.
+  const handleMediaPicked = useCallback((attachments: Attachment[]) => {
+    setMessages(prev => [
+      ...prev,
+      {
+        id: `u-${Date.now()}`,
+        role: 'user',
+        text: '',
+        time: formatTime(new Date()),
+        attachments,
+      },
+    ]);
+  }, []);
+
+  const { pickFromGallery, takePhoto, recordVideo } = useMediaPicker({
+    onPicked: handleMediaPicked,
+  });
 
   const handleSend = useCallback(async () => {
     const text = draft.trim();
@@ -77,8 +98,20 @@ function ChatScreen() {
       <MessageList messages={messages} typing={sending} />
       <KeyboardAvoidingView behavior="padding">
         <AIDisclaimer />
-        <Composer value={draft} onChangeText={setDraft} onSend={handleSend} />
+        <Composer
+          value={draft}
+          onChangeText={setDraft}
+          onSend={handleSend}
+          onPressAttach={() => setAttachmentSheetVisible(true)}
+        />
       </KeyboardAvoidingView>
+      <AttachmentSheet
+        visible={attachmentSheetVisible}
+        onClose={() => setAttachmentSheetVisible(false)}
+        onPickFromGallery={pickFromGallery}
+        onTakePhoto={takePhoto}
+        onRecordVideo={recordVideo}
+      />
     </View>
   );
 }

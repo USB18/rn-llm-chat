@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Image, Pressable, Text, View } from 'react-native';
+import { icons } from '../../assets/icons';
 import { useTheme } from '../../theme';
 import { createStyles } from './ChatHeader.styles';
 
@@ -22,7 +23,10 @@ function ChatHeader({ onNewChat }: Props) {
         onPress={onNewChat}
         style={[styles.side, styles.sideRight]}
       >
-        <Text style={styles.icon}>✎</Text>
+        <Image
+          source={icons.edit}
+          style={[styles.icon, { tintColor: theme.textPrimary }]}
+        />
       </Pressable>
     </View>
   );

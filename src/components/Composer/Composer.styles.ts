@@ -19,9 +19,9 @@ export const createStyles = (theme: Theme) =>
       paddingVertical: 8,
     },
     attachIcon: {
-      fontSize: 26,
-      lineHeight: 32,
-      color: theme.textSecondary,
+      width: 28,
+      height: 28,
+      marginBottom: 2,
     },
     input: {
       flex: 1,
@@ -43,9 +43,7 @@ export const createStyles = (theme: Theme) =>
       backgroundColor: theme.primaryDisabled,
     },
     sendIcon: {
-      color: theme.onPrimary,
-      fontSize: 18,
-      fontFamily: fonts.bold,
-      lineHeight: 20,
+      width: 18,
+      height: 18,
     },
   });

@@ -25,7 +25,7 @@ export const createStyles = (theme: Theme) =>
       color: theme.textPrimary,
     },
     icon: {
-      fontSize: 22,
-      color: theme.textPrimary,
+      width: 24,
+      height: 24,
     },
   });

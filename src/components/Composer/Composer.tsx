@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Image, Pressable, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { icons } from '../../assets/icons';
 import useKeyboardVisible from '../../hooks/useKeyboardVisible';
 import { useTheme } from '../../theme';
 import { createStyles } from './Composer.styles';
@@ -9,9 +10,10 @@ type Props = {
   value: string;
   onChangeText: (text: string) => void;
   onSend: () => void;
+  onPressAttach: () => void;
 };
 
-function Composer({ value, onChangeText, onSend }: Props) {
+function Composer({ value, onChangeText, onSend, onPressAttach }: Props) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const styles = useMemo(() => createStyles(theme), [theme]);
@@ -26,9 +28,13 @@ function Composer({ value, onChangeText, onSend }: Props) {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Attach file"
+          onPress={onPressAttach}
           hitSlop={8}
         >
-          <Text style={styles.attachIcon}>⊕</Text>
+          <Image
+            source={icons.plus}
+            style={[styles.attachIcon, { tintColor: theme.textSecondary }]}
+          />
         </Pressable>
         <TextInput
           value={value}
@@ -49,7 +55,10 @@ function Composer({ value, onChangeText, onSend }: Props) {
           onPress={onSend}
           style={[styles.sendButton, !canSend && styles.sendButtonDisabled]}
         >
-          <Text style={styles.sendIcon}>↑</Text>
+          <Image
+            source={icons.arrowUp}
+            style={[styles.sendIcon, { tintColor: theme.onPrimary }]}
+          />
         </Pressable>
       </View>
     </View>

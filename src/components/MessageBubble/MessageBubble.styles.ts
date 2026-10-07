@@ -41,6 +41,34 @@ export const createStyles = (theme: Theme) =>
       backgroundColor: theme.assistantBubble,
       borderTopLeftRadius: 6,
     },
+    attachments: {
+      gap: 8,
+      marginBottom: 4,
+    },
+    attachmentImage: {
+      width: 220,
+      height: 220,
+      borderRadius: 12,
+      backgroundColor: theme.avatar,
+    },
+    videoTile: {
+      width: 220,
+      height: 140,
+      borderRadius: 12,
+      backgroundColor: theme.codeBackground,
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 6,
+    },
+    videoPlayIcon: {
+      width: 36,
+      height: 36,
+    },
+    videoLabel: {
+      fontFamily: fonts.medium,
+      fontSize: 13,
+      color: theme.textSecondary,
+    },
     text: {
       fontFamily: fonts.medium,
       fontSize: 15,

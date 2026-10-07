@@ -3,7 +3,8 @@ import { Text } from 'react-native';
 import { useTheme } from '../../theme';
 import { createStyles } from './AIDisclaimer.styles';
 
-const DISCLAIMER = 'AI-generated — may contain errors. Verify important information.';
+const DISCLAIMER =
+  'AI-generated — may contain errors. Verify important information.';
 
 function AIDisclaimer() {
   const theme = useTheme();
