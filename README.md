@@ -1,97 +1,94 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# RN LLM Chat
 
-# Getting Started
+A React Native chat app for talking to an LLM. It uses Google's Gemini models through the OpenAI-compatible endpoint, renders replies as Markdown, and strips common personal data from messages before they leave the device.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Features
 
-## Step 1: Start Metro
+- **Chat UI**: message bubbles with timestamps, a typing indicator, a composer, and a "New chat" action.
+- **Markdown replies**: assistant messages render with `react-native-markdown-display`.
+- **Light and dark theme**: styles are built from a shared theme (`src/theme.ts`).
+- **Keyboard-aware layout**: safe-area insets and a keyboard-avoiding composer.
+- **Conversation memory**: the last 10 messages are sent with each request. Error bubbles are shown in the UI but never sent to the model.
+- **PII scrubbing**: emails, credit cards (Luhn-validated), SSNs and phone numbers are replaced with `[EMAIL]`, `[CARD]`, `[SSN]` and `[PHONE]` before sending. This is best-effort regex redaction. Names, addresses and free-form IDs are **not** detected.
+- **Response validation**: replies are checked with [Zod](https://zod.dev). Unexpected shapes, empty replies and safety-filter blocks become readable errors. Replies cut off by the length limit are flagged.
+- **Readable API errors**: Gemini's array-wrapped error bodies are unwrapped into a plain message.
+- **AI disclaimer** shown above the composer.
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## Tech stack
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+- React Native 0.87 and React 19, written in TypeScript
+- `openai` SDK pointed at `https://generativelanguage.googleapis.com/v1beta/openai/`
+- Model: `gemini-3.5-flash-lite`
+- `react-native-dotenv` for loading the API key from `.env`
+- `zod`, `react-native-markdown-display`, `react-native-safe-area-context`
+- Inter font family (`assets/fonts`)
+- Jest for tests, ESLint and Prettier for code quality
 
-```sh
-# Using npm
-npm start
+## Project structure
 
-# OR using Yarn
-yarn start
+```
+App.tsx
+src/
+├── components/     AIDisclaimer, ChatHeader, Composer, MessageBubble, MessageList
+├── hooks/          useKeyboardVisible
+├── screens/        ChatScreen
+├── services/       openai.ts (API client, history handling, error parsing)
+├── utils/          scrubPII.ts, verifyResponse.ts
+├── theme.ts
+└── types.ts
 ```
 
-## Step 2: Build and run your app
+Each component lives in its own folder with a `.tsx` file, a `.styles.ts` file and an `index.ts`.
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+## Getting started
 
-### Android
+### Prerequisites
 
-```sh
-# Using npm
-npm run android
+- Node.js >= 22.11
+- The [React Native environment setup](https://reactnative.dev/docs/set-up-your-environment) for your target platform (Xcode and CocoaPods for iOS, Android Studio for Android)
+- A [Gemini API key](https://aistudio.google.com/apikey)
 
-# OR using Yarn
-yarn android
-```
-
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+### Install
 
 ```sh
+npm install
+
+# iOS only
 bundle install
+bundle exec pod install --project-directory=ios
 ```
 
-Then, and every time you update your native dependencies, run:
+### Configure the API key
+
+Create a `.env` file in the project root (it is git-ignored):
+
+```
+GEMINI_API_KEY=your_key_here
+```
+
+The key is inlined into the JS bundle at build time. Restart Metro after changing it, using `npm start -- --reset-cache` if the old value sticks.
+
+### Run
 
 ```sh
-bundle exec pod install
+npm start          # start Metro
+npm run ios        # in another terminal
+npm run android
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+### Other scripts
 
 ```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
+npm run lint
+npm test
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+## Security note
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+Because the API key is bundled into the app, **this setup is for development only**. Anyone who unpacks a release build can extract the key. For production, route requests through your own backend and keep the key on the server.
 
-## Step 3: Modify your app
+## Roadmap
 
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+- Streaming responses (a commented-out `stream: true` hook is already in `src/services/openai.ts`)
+- Persisting conversations across launches
+- A backend proxy for the API key
